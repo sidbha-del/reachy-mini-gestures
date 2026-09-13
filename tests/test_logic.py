@@ -215,6 +215,19 @@ check("two palms show Hands up, not Hello", decs[-1].active == "raise_both", dec
 _, _, decs = run([[hand("fist", cx=0.3, side="Left"), hand("fist", cx=0.7)]] * 20)
 check("two fists show Ta-da, not Fist", decs[-1].active == "ta_da", decs[-1].active)
 
+# N-namaste. Two hands pressed together, fingers up, edge-on (not facing) -> namaste once
+def pressed(cx, side):
+    p = np.zeros((21, 3)); p[0, 1] = 0.6; p[12, 1] = 0.35
+    return Hand(pts=p, world=np.zeros((21, 3)), side=side, shape=None, conf=0.0, source="none",
+                center=(cx, 0.5), tip=(cx, 0.35), area=0.03, scale=0.12, engaged=False, reject="not facing")
+
+
+_, fires, decs = run([[pressed(0.47, "Left"), pressed(0.53, "Right")]] * 40)
+check("palms pressed together -> namaste once", [f[1] for f in fires] == ["namaste"] and decs[-1].active == "namaste",
+      (fires, decs[-1].active))
+_, fires, _ = run([[pressed(0.3, "Left"), pressed(0.7, "Right")]] * 40)
+check("hands apart with fingers up is not namaste", "namaste" not in [f[1] for f in fires], fires)
+
 # L1. A held finger heart triggers Love you (one merged gesture)
 _, fires, decs = run([[hand("heart")]] * 40)
 check("finger heart fires love", [f[1] for f in fires] == ["love"] and decs[-1].active == "love", (fires, decs[-1].active))
@@ -262,9 +275,15 @@ def synth_hand(extended, folded_ambiguous=()):
 
 
 w = synth_hand({5}, folded_ambiguous={9, 13, 17})
+w[3] = [0.05, -0.01, 0.015]; w[4] = [0.07, 0.0, 0.02]  # thumb tucked (not a finger gun)
 check("back-of-hand point (occluded fingers) -> point", rule_shape(w, w) == "point", rule_shape(w, w))
 w = synth_hand({5})
+w[3] = [0.05, -0.01, 0.015]; w[4] = [0.07, 0.0, 0.02]  # thumb tucked across the palm
 check("clear point -> point", rule_shape(w, w) == "point", rule_shape(w, w))
+w = synth_hand({5})  # index along +x, thumb straight along -y: an L-shaped finger gun
+check("finger gun (index out, thumb up) -> gun", rule_shape(w, w) == "gun", rule_shape(w, w))
+_, fires, _ = run([[hand("gun")]] * 40)
+check("held finger gun fires bang once", [f[1] for f in fires] == ["gun"], fires)
 w = synth_hand({5, 9, 13, 17})
 check("open hand -> open_palm", rule_shape(w, w) == "open_palm", rule_shape(w, w))
 w = synth_hand({9, 13, 17}); w[8] = w[4] + [0.005, 0, 0]

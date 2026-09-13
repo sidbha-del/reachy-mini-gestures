@@ -40,8 +40,10 @@ laptop webcam, or a phone you stand in front of the robot.
 | ✌️ Peace | Index and middle finger up | Body wiggle |
 | 🤟 / 🫰 Love you | Thumb, index and pinky out, or a Korean finger heart | Little dance |
 | 👌 Okay | Thumb and index circle, other fingers up | Curious head tilt |
+| 👉 💥 Bang! | Finger gun: index out, thumb up, other fingers folded | Falls down dead, then slowly comes back |
 | 🙌 Hands up | Both open palms, then raise them | Stretches up tall |
 | ✊✊ → ✋✋ Ta-da | Two fists, then open both hands | Surprise pop |
+| 🙏 Namaste | Press your palms together in front of your chest, fingers up | Bows with antennas leaning together |
 | ✋ → 📷 Too close | Hold a hand right in front of the camera, or push a palm toward it | Startled jolt back, antennas wiggle, “uh-uh-uh” no-no-no sound |
 
 With two hands in view the app is in two-hand mode, so single-hand reactions

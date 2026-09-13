@@ -39,8 +39,10 @@ GESTURES = [
     # be recognized and taught) but no card of its own, and it fires as "love".
     {"key": "heart", "emoji": "\U0001faf0", "steps": ["\U0001faf0"], "hands": 1, "name": "Finger heart", "reaction": "Little dance", "kind": "pose", "teach": "heart", "hidden": True, "hint": "Cross thumb and index finger into a small heart, other fingers folded"},
     {"key": "ok", "emoji": "\U0001f44c", "steps": ["\U0001f44c"], "hands": 1, "name": "Okay", "reaction": "Curious head tilt", "kind": "pose", "teach": "ok", "hint": "Touch thumb and index tip in a circle, other fingers up"},
+    {"key": "gun", "emoji": "\U0001f449", "steps": ["\U0001f449", "\U0001f4a5"], "hands": 1, "name": "Bang!", "reaction": "Falls down dead, then comes back", "kind": "pose", "teach": "gun", "hint": "Finger gun: index out, thumb up, other fingers folded"},
     {"key": "raise_both", "emoji": "\U0001f64c", "steps": ["2x✋", "⬆️"], "hands": 2, "name": "Hands up", "reaction": "Stretches up tall", "kind": "motion", "teach": None, "hint": "Show both open palms, then raise them"},
     {"key": "ta_da", "emoji": "2x✋", "steps": ["2x✊", "2x✋"], "hands": 2, "name": "Ta-da", "reaction": "Surprise pop", "kind": "motion", "teach": None, "hint": "Two fists, then open both hands"},
+    {"key": "namaste", "emoji": "\U0001f64f", "steps": ["\U0001f64f"], "hands": 2, "name": "Namaste", "reaction": "Bows with antennas together", "kind": "pose", "teach": None, "hint": "Press your palms together in front of your chest, fingers up"},
     {"key": "approach", "emoji": "✋", "steps": ["✋", "\U0001f4f7"], "hands": 1, "name": "Too close", "reaction": "Startled: “no no no, don't come close!”", "kind": "motion", "teach": None, "hint": "Hold your hand right in front of the camera, or push a palm toward it"},
 ]
 
@@ -52,7 +54,7 @@ FIRE_AS = {"heart": "love"}
 for _g in GESTURES:
     _g["train"] = _TRAIN.get(_g["key"], [_g["teach"]] if _g["teach"] else [])
 
-POSE_EVENTS = {"open_palm", "fist", "thumbs_up", "thumbs_down", "peace", "love", "ok", "heart"}
+POSE_EVENTS = {"open_palm", "fist", "thumbs_up", "thumbs_down", "peace", "love", "ok", "heart", "gun"}
 
 
 @dataclass
@@ -86,6 +88,10 @@ class LogicConfig:
     close_scale: float = 0.3
     close_area: float = 0.22
     close_hold_s: float = 0.25
+    # Namaste: two hands pressed together (palm centers within this many palm
+    # sizes of each other), fingertips above the wrists, held this long.
+    namaste_gap: float = 1.1
+    namaste_hold_s: float = 0.5
     refire_gap_s: float = 0.6
     predict_s: float = 0.08
 
@@ -248,6 +254,7 @@ class GestureLogic:
         self._latched: dict[str, bool] = {}
         self._last_fire: dict[str, float] = {}
         self._primary_id: int | None = None
+        self._namaste_since: float | None = None
         # Motion-gesture candidates we refused, by reason; shown in /status.
         self.suppressed: collections.Counter[str] = collections.Counter()
 
@@ -365,6 +372,29 @@ class GestureLogic:
             if self._gap_ok("raise_both", t):
                 fire = "raise_both"
                 self._latched["raise_both"] = True
+
+        # --- namaste: palms pressed together, fingers up ---
+        # Palms pressed together are edge-on to the camera, so their shape is
+        # often unreadable; this uses only where the two hands are and which way
+        # the fingers point.
+        def fingers_up(tr: Track) -> bool:
+            p = tr.hand.pts
+            return float(p[12, 1]) < float(p[0, 1]) - 0.5 * tr.hand.scale
+
+        namaste = (
+            pair is not None
+            and math.dist(pair[0].hand.center, pair[1].hand.center)
+            < cfg.namaste_gap * max(pair[0].hand.scale, pair[1].hand.scale)
+            and all(fingers_up(tr) for tr in pair)
+        )
+        if not namaste:
+            self._namaste_since = None
+        elif self._namaste_since is None:
+            self._namaste_since = t
+        namaste_held = namaste and t - self._namaste_since >= cfg.namaste_hold_s
+        if fire is None and self._latch_ok("namaste", namaste_held) and self._gap_ok("namaste", t):
+            fire, detail = "namaste", "palms together"
+            self._latched["namaste"] = True
 
         # --- too close: a hand right in front of the camera means Come close ---
         # Counts hands cut off by the frame edge too, since a very close hand
@@ -490,7 +520,9 @@ class GestureLogic:
             elif pair is not None:
                 # Two hands in view: name the two-hand gesture being formed, never
                 # a single-hand one (two open palms are Hands up, not Hello).
-                if both_palms:
+                if namaste:
+                    decision.active = "namaste"
+                elif both_palms:
                     decision.active = "raise_both"
                 elif all(tr.stable == "fist" or tr.ema["fist"] >= 0.5 for tr in pair):
                     decision.active = "ta_da"

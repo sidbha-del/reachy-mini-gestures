@@ -129,6 +129,27 @@ CLIPS = {
         (0.55, _turn(15, z=8, roll=10, ar=50, al=-50)), (0.75, _turn(0, roll=-10, ar=50, al=-50)), (1.0, {}),
         sound="dance1.wav",
     ),
+    # Namaste: a slow, respectful bow with the antennas leaning in toward each
+    # other. ar=+/al=- leans them inward (same convention as two-pointer mode,
+    # which the user verified); 20 degrees keeps the tips well clear of crossing.
+    "namaste": _clip(
+        (0.0, {}),
+        (0.5, {"pitch": 16, "z": -6, "ar": 20, "al": -20}),
+        (1.7, {"pitch": 16, "z": -6, "ar": 20, "al": -20}),
+        (2.4, {}),
+    ),
+    # Bang! A hit jolts the head back, then Reachy collapses: head drops and
+    # rolls, body sags to one side, antennas go limp. It stays "dead" for a
+    # moment, then slowly comes back to life.
+    "gun": _clip(
+        (0.0, {}),
+        (0.1, _turn(-6, x=-8, pitch=-12, ar=30, al=-30)),
+        (0.45, _turn(18, z=-15, pitch=24, roll=16, ar=-55, al=55)),
+        (2.1, _turn(18, z=-15, pitch=24, roll=16, ar=-55, al=55)),
+        (2.6, _turn(10, z=-10, pitch=18, roll=10, ar=-40, al=40)),
+        (3.4, {}),
+        sound="go_sleep.wav",
+    ),
     # Too close: a startled jolt back, then "no no no, don't come close!" with
     # the antennas wiggling and small head shakes in time with the uh-uh-uh sound.
     "approach": _clip(

@@ -20,7 +20,7 @@ import mediapipe as mp
 import numpy as np
 from mediapipe.tasks.python import BaseOptions, vision
 
-SHAPES = ["point", "open_palm", "fist", "thumbs_up", "thumbs_down", "peace", "love", "ok", "heart"]
+SHAPES = ["point", "open_palm", "fist", "thumbs_up", "thumbs_down", "peace", "love", "ok", "heart", "gun"]
 
 CANNED_TO_SHAPE = {
     "Pointing_Up": "point",
@@ -166,6 +166,14 @@ def rule_shape(pts: np.ndarray, world: np.ndarray) -> str | None:
     thumb = _thumb_extended(world)
 
     if idx and not mid and not ring and not pinky:
+        # Finger gun: thumb also straight and out, roughly at a right angle to the
+        # index (an "L"). A pointing hand keeps its thumb tucked or alongside.
+        if thumb:
+            t_dir = world[4] - world[2]
+            i_dir = world[8] - world[5]
+            cos = float(np.dot(t_dir, i_dir) / (np.linalg.norm(t_dir) * np.linalg.norm(i_dir) + 1e-9))
+            if math.degrees(math.acos(max(-1.0, min(1.0, cos)))) >= 50:
+                return "gun"
         return "point"
     if idx and mid and not ring and not pinky:
         return "peace"
@@ -372,7 +380,8 @@ class HandRecognizer:
                 # A sideways point with the thumb out looks like a thumb gesture to
                 # the model; a clearly extended index finger settles it.
                 gun = (rule == "point" and shape in ("thumbs_up", "thumbs_down")) or (rule == "ok" and shape == "open_palm") or (
-                    rule == "heart" and shape in ("fist", "thumbs_up", "point", "love")
+                    (rule == "heart" and shape in ("fist", "thumbs_up", "point", "love"))
+                    or (rule == "gun" and shape in ("point", "thumbs_up", "thumbs_down", "love"))
                 )
                 if gun or conf < RULE_OVERRIDE_BELOW:
                     shape, conf, source = rule, max(RULE_CONF, conf), "rules"
