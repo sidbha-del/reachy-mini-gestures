@@ -28,6 +28,13 @@ laptop webcam, or a phone you stand in front of the robot.
 > - Hugging Face: <https://huggingface.co/spaces/sidbha1980/reachy-mini-gestures>
 > - GitHub: <https://github.com/sidbha-del/reachy-mini-gestures>
 
+## Demo
+
+[![Reachy Mini Gestures demo: Reachy reacting to hand gestures](media/demo-poster.jpg)](media/demo.mp4)
+
+▶ [Watch the 70-second demo](media/demo.mp4) (it also plays right on the
+[Hugging Face page](https://huggingface.co/spaces/sidbha1980/reachy-mini-gestures)).
+
 ## Gestures
 
 | Gesture | How | Reachy |

@@ -29,6 +29,7 @@ body {
 
 .container { max-width: 960px; margin: 0 auto; display: grid; gap: 16px; }
 .card { background: var(--card); border: 1px solid var(--stroke); border-radius: 22px; padding: 28px; }
+.demo video { display: block; width: 100%; max-width: 100%; aspect-ratio: 16 / 9; border-radius: 16px; background: #000; }
 .card h2 { font-size: 24px; letter-spacing: -0.02em; margin-bottom: 16px; }
 
 .gestures { list-style: none; display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; }

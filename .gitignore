@@ -11,6 +11,9 @@ camera_snapshot.jpg
 build/
 dist/
 
+# Local tool settings (paths, permissions) - never published
+.claude/
+
 # Personal data and local state (created at runtime; never published)
 teach_samples.json
 app_settings.json
