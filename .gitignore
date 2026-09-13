@@ -1,0 +1,23 @@
+reachy_mini_env/
+__pycache__/
+*.log
+*.err
+*.pem
+*.key
+*.crt
+*.tmp
+camera_snapshot.jpg
+*.egg-info/
+build/
+dist/
+
+# Personal data and local state (created at runtime; never published)
+teach_samples.json
+app_settings.json
+camera_source.json
+gesture_templates.json
+
+# Old prototype files kept locally only
+backup_v1/
+gestures.py
+hand_landmarker.task

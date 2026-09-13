@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Reachy Mini Gestures</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="hero">
+    <div class="app-icon" aria-hidden="true">👋</div>
+    <h1>Reachy Mini Gestures</h1>
+    <p class="tagline">Point, wave or give a thumbs up. Reachy Mini answers with its head, body and antennas.</p>
+  </header>
+
+  <main class="container">
+    <section class="card">
+      <h2>Gestures</h2>
+      <ul class="gestures">
+        <li><span>☝️</span><b>Point</b>Head and body follow your finger</li>
+        <li><span class="pair">☝️<i>☝️</i></span><b>Two pointers</b>Antennas copy your finger angles</li>
+        <li><span>👋</span><b>Hello</b>Waves back</li>
+        <li><span>✊</span><b>Fist</b>Gets shy</li>
+        <li><span>👍</span><b>Thumbs up</b>Happy nod</li>
+        <li><span>👎</span><b>Thumbs down</b>Sad head shake</li>
+        <li><span>✌️</span><b>Peace</b>Body wiggle</li>
+        <li><span>🤟</span><b>Love you</b>Or a 🫰 finger heart · little dance</li>
+        <li><span>👌</span><b>Okay</b>Curious head tilt</li>
+        <li><span>🙌</span><b>Hands up</b>Stretches up tall</li>
+        <li><span class="pair">✊<i>✊</i></span><b>Ta-da</b>Two fists, then open hands</li>
+        <li><span>✋</span><b>Too close</b>Startled “no no no!”</li>
+      </ul>
+    </section>
+
+    <section class="card">
+      <h2>Get started</h2>
+      <ol class="steps">
+        <li>Turn on Reachy Mini and start its daemon (the Reachy Mini dashboard does this for you).</li>
+        <li>In the dashboard's app list, find <b>reachy_mini_gestures</b>, install it and press start.
+          Or install from source: <code>git clone https://github.com/sidbha-del/reachy-mini-gestures</code>, then <code>pip install -e .</code> and run <code>reachy-mini-gestures</code>.</li>
+        <li>Open <code>https://localhost:8765</code> and accept the browser's certificate warning once (the app makes its own local certificate).</li>
+        <li>Choose a camera: the robot's, your laptop's, or your phone standing in front of Reachy.</li>
+      </ol>
+      <p class="note">This app controls a real robot, so it runs on the computer connected to Reachy Mini, not on Hugging Face. Full setup, phone camera and troubleshooting help is in the README.</p>
+    </section>
+  </main>
+
+  <footer class="footer">
+    Built on the <a href="https://github.com/pollen-robotics/reachy_mini" target="_blank" rel="noopener">Reachy Mini SDK</a>
+    and MediaPipe · Apache-2.0 ·
+    <a href="https://huggingface.co/spaces/pollen-robotics/reachy-mini-landing-page#apps" target="_blank" rel="noopener">More apps</a>
+  </footer>
+</body>
+</html>

@@ -1,0 +1,294 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="dark light">
+<title>Reachy Gestures</title>
+<link rel="stylesheet" href="/static/app.css?v=__V__">
+</head>
+<body>
+<div class="app">
+  <header class="topbar">
+    <div class="brand">
+      <svg class="brand-mark" viewBox="0 0 40 40" aria-hidden="true">
+        <rect x="1" y="1" width="38" height="38" rx="11" fill="currentColor" opacity=".12"/>
+        <path d="M14 12 11 6M26 12l3-6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+        <rect x="8" y="12" width="24" height="18" rx="9" fill="none" stroke="currentColor" stroke-width="2.2"/>
+        <circle cx="16" cy="21" r="2.4" fill="currentColor"/><circle cx="24" cy="21" r="2.4" fill="currentColor"/>
+      </svg>
+      <div class="brand-text">
+        <div class="brand-title">Reachy Gestures</div>
+        <div class="brand-sub"><span class="status-dot" id="robot-dot"></span><span id="robot-text">Connecting…</span></div>
+      </div>
+    </div>
+
+    <div class="seg" id="source-seg" role="tablist" aria-label="Camera">
+      <span class="seg-thumb" aria-hidden="true"></span>
+      <button role="tab" data-source="robot">Robot</button>
+      <button role="tab" data-source="webcam">Laptop</button>
+      <button role="tab" data-source="phone">Phone</button>
+    </div>
+
+    <div class="top-actions">
+      <button class="pill-btn" id="btn-teach">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l1.8 4.6L18.5 9l-4.7 1.4L12 15l-1.8-4.6L5.5 9l4.7-1.4L12 3zM18.5 15l.9 2.2 2.1.8-2.1.8-.9 2.2-.9-2.2-2.1-.8 2.1-.8.9-2.2z" fill="currentColor"/></svg>
+        <span>Teach</span>
+      </button>
+      <button class="icon-btn" id="btn-settings" aria-label="Settings">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M19.4 13.5a7.6 7.6 0 0 0 0-3l2-1.6-2-3.4-2.4.9a7.4 7.4 0 0 0-2.6-1.5L14 2.5h-4l-.4 2.4A7.4 7.4 0 0 0 7 6.4l-2.4-.9-2 3.4 2 1.6a7.6 7.6 0 0 0 0 3l-2 1.6 2 3.4 2.4-.9a7.4 7.4 0 0 0 2.6 1.5l.4 2.4h4l.4-2.4a7.4 7.4 0 0 0 2.6-1.5l2.4.9 2-3.4-2-1.6z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <main class="layout">
+    <section class="stage-col">
+      <div class="stage" id="stage">
+        <img id="video" alt="" draggable="false">
+        <canvas id="overlay"></canvas>
+
+        <div class="hud glass">
+          <span class="status-dot" id="hud-dot"></span>
+          <span id="hud-source">Robot</span>
+          <span class="hud-sep"></span>
+          <span id="hud-fps">— fps</span>
+          <span class="hud-sep"></span>
+          <span id="hud-lat">— ms</span>
+        </div>
+
+        <div class="hint glass" id="hint" hidden>
+          <svg class="hint-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.6 10.8c.7.5 1.1 1.3 1.1 2.2h5c0-.9.4-1.7 1.1-2.2A6 6 0 0 0 12 3z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <div class="hint-body">
+            <div class="hint-text" id="hint-text"></div>
+            <div class="hint-actions" id="hint-actions"></div>
+          </div>
+          <button class="hint-close" id="hint-close" aria-label="Dismiss">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7l10 10M17 7 7 17" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          </button>
+        </div>
+
+        <div class="empty" id="empty" hidden>
+          <div class="spinner" id="empty-spinner"></div>
+          <div class="empty-title" id="empty-title">Starting camera…</div>
+          <div class="empty-sub" id="empty-sub"></div>
+          <button class="btn btn-primary" id="empty-action" hidden></button>
+        </div>
+
+        <div class="countdown" id="countdown" hidden></div>
+
+        <div class="gesture-pill glass" id="pill" aria-live="polite">
+          <div class="pill-emoji" id="pill-emoji"></div>
+          <div class="pill-text">
+            <div class="pill-name" id="pill-name"></div>
+            <div class="pill-sub" id="pill-sub"></div>
+          </div>
+          <svg class="ring" viewBox="0 0 44 44" aria-hidden="true">
+            <circle cx="22" cy="22" r="19" class="ring-track"/>
+            <circle cx="22" cy="22" r="19" class="ring-fill" id="ring-fill"/>
+          </svg>
+        </div>
+
+        <div class="toast glass" id="toast" aria-live="assertive">
+          <div class="toast-emoji" id="toast-emoji"></div>
+          <div>
+            <div class="toast-title" id="toast-title"></div>
+            <div class="toast-sub" id="toast-sub"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="controls">
+        <div class="btn-group">
+          <button class="btn" id="btn-wake">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+            Wake
+          </button>
+          <button class="btn" id="btn-sleep">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+            Sleep
+          </button>
+        </div>
+        <div class="controls-meta" id="controls-meta"></div>
+        <button class="btn btn-quiet-danger" id="btn-stop">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="6" width="12" height="12" rx="2.5" fill="currentColor"/></svg>
+          Stop app
+        </button>
+      </div>
+    </section>
+
+    <aside class="panel">
+      <div class="panel-head">
+        <h2>Gestures</h2>
+        <span class="panel-meta" id="hands-meta">No hands</span>
+      </div>
+      <div class="grid" id="grid"></div>
+    </aside>
+  </main>
+</div>
+
+<div class="scrim" id="scrim"></div>
+
+<section class="sheet" id="sheet-phone" aria-hidden="true" role="dialog" aria-labelledby="phone-title">
+  <header class="sheet-head">
+    <h3 id="phone-title">Use your phone as the camera</h3>
+    <button class="icon-btn sheet-close" aria-label="Close"><svg viewBox="0 0 24 24"><path d="M7 7l10 10M17 7 7 17" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+  </header>
+  <div class="sheet-body">
+    <div class="qr-card">
+      <img src="/api/qr.svg?v=__V__" alt="QR code for the phone camera page" class="qr">
+      <div class="qr-url"><span id="phone-url"></span><button class="link-btn" id="copy-url">Copy</button></div>
+    </div>
+    <ol class="steps">
+      <li><b>Scan</b> the code with your phone's camera. Stay on the same Wi-Fi.</li>
+      <li>If you see a certificate warning, tap <b>Advanced → Proceed</b>. It's this computer's own secure link.</li>
+      <li><b>Allow camera</b>, then stand the phone <b>just in front of Reachy</b>, facing you.</li>
+    </ol>
+    <figure class="placement" aria-label="Stand the phone just in front of Reachy, camera facing you">
+      <svg viewBox="0 0 240 112" role="img" aria-hidden="true">
+        <line class="pl-floor" x1="8" y1="96" x2="232" y2="96"/>
+        <g class="pl-person">
+          <circle cx="36" cy="34" r="9"/>
+          <path d="M36 44v36M36 54l18-14"/>
+          <circle cx="57" cy="37" r="3.5"/>
+        </g>
+        <polygon class="pl-cone" points="142,70 62,22 62,92"/>
+        <g class="pl-reachy">
+          <rect x="176" y="68" width="34" height="28" rx="8"/>
+          <rect x="172" y="42" width="42" height="28" rx="13"/>
+          <circle cx="184" cy="56" r="2.6" class="pl-fill"/>
+          <path d="M184 42l-6-14M202 42l6-14"/>
+        </g>
+        <g class="pl-phone">
+          <rect x="142" y="64" width="7" height="32" rx="2"/>
+          <circle cx="142.5" cy="70" r="1.6" class="pl-fill"/>
+        </g>
+        <path class="pl-dist" d="M40 104h100"/>
+        <text x="90" y="110" class="pl-text">1–2 m</text>
+      </svg>
+      <figcaption><b>Best spot:</b> right in front of Reachy, camera facing you, in landscape and tilted up a little. Then Reachy looks where you point.</figcaption>
+    </figure>
+    <div class="connect-status" id="phone-status">
+      <span class="spinner small"></span>
+      <span id="phone-status-text">Waiting for your phone…</span>
+    </div>
+    <p class="fineprint">Phones and laptop cameras stream at up to 30 fps, so tracking feels faster and smoother than the robot's built-in camera.</p>
+  </div>
+</section>
+
+<section class="sheet" id="sheet-settings" aria-hidden="true" role="dialog" aria-labelledby="settings-title">
+  <header class="sheet-head">
+    <h3 id="settings-title">Settings</h3>
+    <button class="icon-btn sheet-close" aria-label="Close"><svg viewBox="0 0 24 24"><path d="M7 7l10 10M17 7 7 17" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+  </header>
+  <div class="sheet-body">
+    <div class="group">
+      <div class="row row-col">
+        <div class="row-label">Sensitivity</div>
+        <input type="range" id="set-sensitivity" min="0" max="1" step="0.05">
+        <div class="range-legend"><span>Careful</span><span>Quick</span></div>
+      </div>
+      <div class="row row-col">
+        <div class="row-label">Ignore hands near the bottom <span class="row-value" id="zone-value"></span></div>
+        <input type="range" id="set-zone" min="0" max="0.35" step="0.01">
+        <div class="row-help">Hands resting on a desk or lap in this band never trigger anything.</div>
+      </div>
+    </div>
+    <div class="group">
+      <label class="row">
+        <span class="row-label">Mirror video</span>
+        <input type="checkbox" class="switch" id="set-mirror">
+      </label>
+      <label class="row">
+        <span class="row-label">Sounds</span>
+        <input type="checkbox" class="switch" id="set-sound">
+      </label>
+      <div class="row row-col" id="row-sound-output">
+        <div class="row-label">Play sounds on</div>
+        <div class="seg seg-sm" id="seg-sound" role="tablist" aria-label="Sound output">
+          <span class="seg-thumb" aria-hidden="true"></span>
+          <button role="tab" data-value="auto">Auto</button>
+          <button role="tab" data-value="robot">Reachy</button>
+          <button role="tab" data-value="computer">This computer</button>
+        </div>
+        <div class="row-help">Auto uses Reachy's speaker, and switches to this computer (or a Bluetooth speaker paired with it) whenever Reachy's speaker isn't available.</div>
+      </div>
+      <label class="row" id="row-free-usb" hidden>
+        <span>
+          <span class="row-label">Pause robot camera when using another camera</span>
+          <span class="row-help" style="display:block">Reachy Mini Lite's camera, speaker and motors share one USB 2.0 connection. Pausing the camera frees it for the motors and saves processing power. With sounds on Auto, they move to this computer.</span>
+        </span>
+        <input type="checkbox" class="switch" id="set-free-usb">
+      </label>
+    </div>
+    <div class="group about">
+      <div class="row-label">Which camera is fastest?</div>
+      <div class="about-item"><b>Laptop</b> Up to 30 fps. Quickest reactions when you sit at the computer.</div>
+      <div class="about-item"><b>Phone</b> Up to 30 fps over Wi-Fi. Place it anywhere with a good view of your hands.</div>
+      <div class="about-item"><b>Robot</b> No setup, and head-pointing is most accurate. <span id="robot-cam-note">On Reachy Mini Lite it's limited to about 10 fps by the robot's internal USB 2.0 hub.</span></div>
+      <div class="about-profile" id="about-profile"></div>
+    </div>
+  </div>
+</section>
+
+<section class="sheet sheet-wide" id="sheet-teach" aria-hidden="true" role="dialog" aria-labelledby="teach-title">
+  <header class="sheet-head">
+    <div>
+      <h3 id="teach-title">Teach Reachy</h3>
+      <p class="sheet-sub">Optional. Add your own examples to make recognition even more reliable for your hands. Examples are saved permanently.</p>
+    </div>
+    <button class="icon-btn sheet-close" aria-label="Close"><svg viewBox="0 0 24 24"><path d="M7 7l10 10M17 7 7 17" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+  </header>
+  <div class="sheet-body">
+    <div class="chips" id="teach-chips"></div>
+
+    <div class="teach-live" id="teach-live">
+      <div class="teach-target">
+        <div class="teach-emoji" id="teach-emoji"></div>
+        <div>
+          <div class="teach-name" id="teach-name"></div>
+          <div class="teach-hint" id="teach-hint"></div>
+        </div>
+      </div>
+      <div class="meter-row">
+        <span class="meter-label" id="teach-seeing">No hand in view</span>
+        <span class="meter-pct" id="teach-pct"></span>
+      </div>
+      <div class="meter"><div class="meter-fill" id="teach-meter"></div></div>
+      <div class="teach-actions">
+        <button class="btn btn-primary btn-lg" id="teach-capture">Capture</button>
+        <button class="btn btn-lg" id="teach-timer">Capture in 3s</button>
+      </div>
+      <div class="teach-status" id="teach-status"></div>
+    </div>
+
+    <div class="teach-review" id="teach-review" hidden>
+      <img class="snapshot" id="teach-snapshot" alt="Captured frame">
+      <div class="verdict" id="teach-verdict"></div>
+      <div class="verdict-note" id="teach-note"></div>
+      <div class="teach-actions">
+        <button class="btn btn-primary btn-lg" id="teach-save">Save example</button>
+        <button class="btn btn-lg" id="teach-discard">Discard</button>
+      </div>
+    </div>
+
+    <div class="teach-footer">
+      <button class="link-btn danger" id="teach-delete">Delete examples for this gesture</button>
+      <button class="link-btn danger" id="teach-reset">Reset all examples</button>
+    </div>
+  </div>
+</section>
+
+<div class="dialog-wrap" id="dialog" hidden>
+  <div class="dialog glass" role="alertdialog" aria-labelledby="dialog-title">
+    <div class="dialog-title" id="dialog-title"></div>
+    <div class="dialog-msg" id="dialog-msg"></div>
+    <div class="dialog-actions">
+      <button class="btn" id="dialog-cancel">Cancel</button>
+      <button class="btn btn-primary" id="dialog-ok">OK</button>
+    </div>
+  </div>
+</div>
+
+<script src="/static/app.js?v=__V__"></script>
+</body>
+</html>

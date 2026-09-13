@@ -1,0 +1,43 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "reachy_mini_gestures"
+version = "0.2.0"
+description = "Hand-gesture control for Reachy Mini: point, wave, ta-da and more, using the robot, laptop or phone camera."
+readme = "README.md"
+license = { text = "Apache-2.0" }
+requires-python = ">=3.10"
+dependencies = [
+    "reachy-mini>=1.10",
+    "mediapipe>=0.10.20",
+    "opencv-python",
+    "numpy",
+    "scipy",
+    "fastapi",
+    "uvicorn",
+    "segno",
+    "cryptography",
+]
+keywords = ["reachy-mini-app", "gestures", "mediapipe", "robotics"]
+
+[project.urls]
+Source = "https://github.com/sidbha-del/reachy-mini-gestures"
+
+[project.entry-points."reachy_mini_apps"]
+reachy_mini_gestures = "reachy_mini_gestures.main:ReachyMiniGestures"
+
+[project.scripts]
+reachy-mini-gestures = "reachy_mini_gestures.gesture_web_app:main"
+
+[tool.setuptools]
+package-dir = { "" = "." }
+include-package-data = true
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["reachy_mini_gestures*"]
+
+[tool.setuptools.package-data]
+reachy_mini_gestures = ["**/*"]

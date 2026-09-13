@@ -1,0 +1,47 @@
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --bg: #f5f5f7;
+  --card: #ffffff;
+  --text: #1d1d1f;
+  --muted: #6e6e73;
+  --accent: #0071e3;
+  --stroke: rgba(0, 0, 0, 0.08);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root { --bg: #000; --card: #1c1c1e; --text: #f5f5f7; --muted: #a1a1a6; --accent: #0a84ff; --stroke: rgba(255, 255, 255, 0.1); }
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif;
+  line-height: 1.5;
+  color: var(--text);
+  background: var(--bg);
+  padding-inline: 16px;
+  -webkit-font-smoothing: antialiased;
+}
+
+.hero { max-width: 760px; margin: 0 auto; padding: 72px 0 40px; text-align: center; }
+.app-icon { font-size: 64px; }
+.hero h1 { margin-top: 8px; font-size: clamp(32px, 6vw, 52px); font-weight: 700; letter-spacing: -0.03em; }
+.tagline { margin: 12px auto 0; max-width: 560px; font-size: 19px; color: var(--muted); }
+
+.container { max-width: 960px; margin: 0 auto; display: grid; gap: 16px; }
+.card { background: var(--card); border: 1px solid var(--stroke); border-radius: 22px; padding: 28px; }
+.card h2 { font-size: 24px; letter-spacing: -0.02em; margin-bottom: 16px; }
+
+.gestures { list-style: none; display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; }
+.gestures li { display: grid; grid-template-columns: auto 1fr; column-gap: 12px; align-items: center; padding: 12px; border-radius: 14px; border: 1px solid var(--stroke); color: var(--muted); font-size: 14px; }
+.gestures li span { grid-row: span 2; font-size: 28px; }
+.gestures li b { color: var(--text); font-size: 15px; }
+.pair i { display: inline-block; font-style: normal; transform: scaleX(-1); }
+
+.steps { padding-left: 20px; display: grid; gap: 8px; color: var(--muted); }
+.steps b { color: var(--text); }
+.note { margin-top: 14px; font-size: 14px; color: var(--muted); }
+code { word-break: break-word; font-family: "SF Mono", ui-monospace, Menlo, Consolas, monospace; font-size: 0.92em; color: var(--accent); }
+
+.footer { max-width: 960px; margin: 0 auto; padding: 32px 0 48px; text-align: center; font-size: 13px; color: var(--muted); }
+.footer a { color: var(--accent); text-decoration: none; }
+.footer a:hover { text-decoration: underline; }
